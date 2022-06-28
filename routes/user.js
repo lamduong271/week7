@@ -1,20 +1,25 @@
 var express = require("express");
 var router = express.Router();
 var User = require("../models/user.model");
-
+var bcrypt = require("bcrypt");
 router.get("/user/register", (req, res) => {
   res.send("Welcome to authentication tutorial");
 });
 
 router.post("/user/register", async (req, res) => {
   console.log(req.body);
+  const saltRounds = 10;
   try {
+    const existUser = await User.findOne({ email: req.body.email });
+    if (existUser) {
+      res.send("Email already in use.");
+    }
     const hashedPwd = await bcrypt.hash(req.body.password, saltRounds);
-    const insertResult = await User.create({
+    await User.create({
       username: req.body.username,
       password: hashedPwd,
     });
-    res.send(insertResult);
+    res.send("ok");
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal Server error Occured");
