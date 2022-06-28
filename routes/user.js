@@ -26,4 +26,20 @@ router.post("/user/register", async (req, res) => {
   }
 });
 
+router.post("/user/login", async (req, res) => {
+  try {
+    const existUser = await User.findOne({ email: req.body.email });
+    if (existUser) {
+      const comparedPwd = await bcrypt.compare(req.body.password, saltRounds);
+      if (comparedPwd) {
+        res.send({ success: true });
+      }
+      res.status(401).send({ message: "not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server error Occured");
+  }
+});
+
 module.exports = router;
