@@ -3,6 +3,7 @@ const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const userRouter = require("./routes/user");
+const privateRouter = require("./routes/private");
 
 app.use(
   cors({
@@ -13,6 +14,13 @@ app.use(
 app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+app.use(function (req, res, next) {
+  res.header(
+    "Access-Control-Allow-Headers",
+    "x-access-token, Origin, Content-Type, Accept"
+  );
+  next();
+});
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
@@ -33,6 +41,7 @@ mongoose
   });
 
 app.use("/api", userRouter);
+app.use("/api", privateRouter);
 // set port, listen for requests
 const PORT = process.env.PORT || 1234;
 app.listen(PORT, () => {

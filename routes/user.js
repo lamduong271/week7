@@ -3,11 +3,11 @@ var router = express.Router();
 var User = require("../models/user.model");
 var bcrypt = require("bcrypt");
 var jsonWebToken = require("jsonwebtoken");
+const { JSON_SECRET_CODE } = require("../middleware/auth");
+
 router.get("/user/register", (req, res) => {
   res.send("Welcome to authentication tutorial");
 });
-
-var JSON_SECRET_CODE = "thiIsADog";
 
 const saltRounds = 10;
 
@@ -47,8 +47,12 @@ router.post("/user/login", async (req, res) => {
             id: existUser._id,
             email: existUser.email,
           },
-          JSON_SECRET_CODE
+          JSON_SECRET_CODE,
+          {
+            expiresIn: 86400,
+          }
         );
+        existUser.token = token;
         res.send({ success: true, token });
       } else {
         res.status(401).send({ message: "not found" });
