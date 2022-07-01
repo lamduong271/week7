@@ -4,7 +4,7 @@ const app = express();
 const mongoose = require("mongoose");
 const userRouter = require("./routes/user");
 const privateRouter = require("./routes/private");
-
+const todoRouter = require("./routes/todo");
 app.use(
   cors({
     origin: "*",
@@ -42,6 +42,7 @@ mongoose
 
 app.use("/api", userRouter);
 app.use("/api", privateRouter);
+app.use("/api", todoRouter);
 // set port, listen for requests
 const PORT = process.env.PORT || 1234;
 app.listen(PORT, () => {
